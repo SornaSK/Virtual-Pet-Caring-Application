@@ -112,6 +112,29 @@
     </div>
 
     <script src="index.js"></script>
+     <script>
+        // Enable drag-and-drop on mobile using SortableJS
+        const isMobile = window.innerWidth <= 768;
+
+        if (isMobile) {
+            // Enable mobile touch support for drag-and-drop using SortableJS
+            const foodItems = document.querySelectorAll('.food-item');
+            foodItems.forEach((item) => {
+                new Sortable(item, {
+                    touchStartThreshold: 10, // Customize for mobile users
+                    onStart(evt) {
+                        console.log("Dragging started");
+                    },
+                    onEnd(evt) {
+                        console.log("Dragging ended");
+                    }
+                });
+            });
+        } else {
+            // Desktop version - no changes needed for existing drag and drop
+            console.log("Desktop version - drag-and-drop is working.");
+        }
+    </script>
 
 </body>
 

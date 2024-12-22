@@ -68,19 +68,20 @@
         </div>
     </div>
 
-    <!-- Feed Section -->
-    <div id="feedSection" class="container hidden">
-        <div class="pet-container">
-            <img class="pet" id="petImage" src="./image/cat-with-plate.png" alt="Pet">
-        </div>
-        <div class="plate">
-            <img src="./image/pizza.png" alt="Pizza" draggable="true" ondragstart="dragStart(event)" id="pizza" class="food-item">
-            <img src="./image/bread.png" alt="Bread" draggable="true" ondragstart="dragStart(event)" id="bread" class="food-item">
-            <img src="./image/milkshake.png" alt="Juice" draggable="true" ondragstart="dragStart(event)" id="juice" class="food-item">
-            <img src="./image/donut.png" alt="Donut" draggable="true" ondragstart="dragStart(event)" id="donut" class="food-item">
-        </div>
-        <button id="buttons" onclick="goHome()">Back to Home</button>
+ <!-- Feed Section -->
+<div id="feedSection" class="container hidden">
+    <div class="pet-container">
+        <img class="pet" id="petImage" src="./image/cat-with-plate.png" alt="Pet">
     </div>
+    <div class="plate">
+        <img src="./image/pizza.png" alt="Pizza" draggable="true" ondragstart="dragStart(event)" id="pizza" class="food-item">
+        <img src="./image/bread.png" alt="Bread" draggable="true" ondragstart="dragStart(event)" id="bread" class="food-item">
+        <img src="./image/milkshake.png" alt="Juice" draggable="true" ondragstart="dragStart(event)" id="juice" class="food-item">
+        <img src="./image/donut.png" alt="Donut" draggable="true" ondragstart="dragStart(event)" id="donut" class="food-item">
+    </div>
+    <button id="buttons" onclick="goHome()">Back to Home</button>
+</div>
+
 
     <!-- Play Section -->
     <div id="playSection" class="container hidden">
@@ -112,29 +113,6 @@
 
     <script src="index.js"></script>
 
-    <script>
-        // Enable drag-and-drop on mobile using SortableJS
-        const isMobile = window.innerWidth <= 768;
-
-        if (isMobile) {
-            // Enable mobile touch support for drag-and-drop using SortableJS
-            const foodItems = document.querySelectorAll('.food-item');
-            foodItems.forEach((item) => {
-                new Sortable(item, {
-                    touchStartThreshold: 10, // Customize for mobile users
-                    onStart(evt) {
-                        console.log("Dragging started");
-                    },
-                    onEnd(evt) {
-                        console.log("Dragging ended");
-                    }
-                });
-            });
-        } else {
-            // Desktop version - no changes needed for existing drag and drop
-            console.log("Desktop version - drag-and-drop is working.");
-        }
-    </script>
 </body>
 
 </html>

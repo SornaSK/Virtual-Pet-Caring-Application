@@ -114,6 +114,12 @@ body {
     margin: 10px;
     cursor: grab;
 }
+/* Style for the dragged element */
+.food-item.dragging {
+    position: absolute;
+    z-index: 1000; /* Ensures the dragged item appears above other content */
+    cursor: grabbing;
+}
 
 /* Rest Section Styles */
 #restSection {
@@ -354,12 +360,6 @@ body {
     margin-bottom: 2rem;
     border-radius: 10px;
 }
-/* Dragging element styles */
-.dragging {
-    position: absolute;
-    z-index: 1000;
-}
-
 
 @keyframes fadeIn {
     from {

@@ -35,36 +35,31 @@ const feedSection = document.getElementById('feedSection');
 const statusSection = document.getElementById('statusSection');
 
 
-// Touch event handling for mobile devices
+// Touch event handling for mobile devices// Unified interaction handling for both touch and mouse events
 let isDragging = false;
 let currentDraggedElement = null;
 
-// Add these functions to handle touch events
-function handleTouchStart(event) {
-    const touchedElement = event.target;
-    if (touchedElement.tagName === 'IMG' && touchedElement.parentElement.classList.contains('food-item')) {
+// Mouse event handlers
+function handleMouseDown(event) {
+    const clickedElement = event.target;
+    if (clickedElement.tagName === 'IMG' && clickedElement.parentElement.classList.contains('food-item')) {
         event.preventDefault();
         isDragging = true;
-        currentDraggedElement = touchedElement;
-        
-        // Create a visual feedback for the user
-        touchedElement.style.opacity = '0.7';
+        currentDraggedElement = clickedElement;
+        clickedElement.style.opacity = '0.7';
     }
 }
 
-function handleTouchMove(event) {
+function handleMouseMove(event) {
     if (!isDragging || !currentDraggedElement) return;
     
     event.preventDefault();
     
-    // Get the touch coordinates
-    const touch = event.touches[0];
-    
     // Create or update the dragging preview
-    let preview = document.getElementById('touch-preview');
+    let preview = document.getElementById('drag-preview');
     if (!preview) {
         preview = document.createElement('div');
-        preview.id = 'touch-preview';
+        preview.id = 'drag-preview';
         preview.style.cssText = `
             position: fixed;
             pointer-events: none;
@@ -81,19 +76,17 @@ function handleTouchMove(event) {
     }
     
     // Update preview position
-    preview.style.left = `${touch.pageX - 25}px`;
-    preview.style.top = `${touch.pageY - 25}px`;
+    preview.style.left = `${event.pageX - 25}px`;
+    preview.style.top = `${event.pageY - 25}px`;
 }
 
-function handleTouchEnd(event) {
+function handleMouseUp(event) {
     if (!isDragging || !currentDraggedElement) return;
     
     event.preventDefault();
     
-    // Get the touch coordinates
-    const touch = event.changedTouches[0];
-    // Get the element at the touch position
-    const dropTarget = document.elementFromPoint(touch.clientX, touch.clientY);
+    // Get the element at the current position
+    const dropTarget = document.elementFromPoint(event.clientX, event.clientY);
     
     // Check if we dropped on the pet image
     if (dropTarget && dropTarget.id === 'petImage') {
@@ -116,36 +109,118 @@ function handleTouchEnd(event) {
     currentDraggedElement = null;
     
     // Remove preview
-    const preview = document.getElementById('touch-preview');
+    const preview = document.getElementById('drag-preview');
     if (preview) {
         preview.remove();
     }
 }
 
-// Add this CSS for touch feedback
-const touchStyle = document.createElement('style');
-touchStyle.textContent = `
+// Touch event handlers (same as before but with different event properties)
+function handleTouchStart(event) {
+    const touchedElement = event.target;
+    if (touchedElement.tagName === 'IMG' && touchedElement.parentElement.classList.contains('food-item')) {
+        event.preventDefault();
+        isDragging = true;
+        currentDraggedElement = touchedElement;
+        touchedElement.style.opacity = '0.7';
+    }
+}
+
+function handleTouchMove(event) {
+    if (!isDragging || !currentDraggedElement) return;
+    
+    event.preventDefault();
+    
+    const touch = event.touches[0];
+    let preview = document.getElementById('drag-preview');
+    if (!preview) {
+        preview = document.createElement('div');
+        preview.id = 'drag-preview';
+        preview.style.cssText = `
+            position: fixed;
+            pointer-events: none;
+            z-index: 1000;
+            width: 50px;
+            height: 50px;
+            background-image: url(${currentDraggedElement.src});
+            background-size: contain;
+            background-repeat: no-repeat;
+            background-position: center;
+            opacity: 0.8;
+        `;
+        document.body.appendChild(preview);
+    }
+    
+    preview.style.left = `${touch.pageX - 25}px`;
+    preview.style.top = `${touch.pageY - 25}px`;
+}
+
+function handleTouchEnd(event) {
+    if (!isDragging || !currentDraggedElement) return;
+    
+    event.preventDefault();
+    
+    const touch = event.changedTouches[0];
+    const dropTarget = document.elementFromPoint(touch.clientX, touch.clientY);
+    
+    if (dropTarget && dropTarget.id === 'petImage') {
+        const foodType = currentDraggedElement.id;
+        if (foodImageMappings[foodType]) {
+            showFoodMessage(foodType, dropTarget);
+            dropTarget.src = foodImageMappings[foodType]();
+            setTimeout(() => {
+                dropTarget.src = petImages[selectedPet].feed;
+            }, 3000);
+            handleFeeding();
+        }
+    }
+    
+    isDragging = false;
+    if (currentDraggedElement) {
+        currentDraggedElement.style.opacity = '1';
+    }
+    currentDraggedElement = null;
+    
+    const preview = document.getElementById('drag-preview');
+    if (preview) {
+        preview.remove();
+    }
+}
+
+// Add style for interaction feedback
+const interactionStyle = document.createElement('style');
+interactionStyle.textContent = `
     .food-item img {
         touch-action: none;
         -webkit-touch-callout: none;
         -webkit-user-select: none;
         user-select: none;
+        cursor: pointer;
     }
     
     .food-item img:active {
         opacity: 0.7;
     }
 `;
-document.head.appendChild(touchStyle);
+document.head.appendChild(interactionStyle);
 
+// Add event listeners for both touch and mouse events
 document.addEventListener('DOMContentLoaded', () => {
     const foodItems = document.querySelectorAll('.food-item img');
+    
+    // Touch events
     foodItems.forEach(item => {
         item.addEventListener('touchstart', handleTouchStart, { passive: false });
     });
-    
     document.addEventListener('touchmove', handleTouchMove, { passive: false });
     document.addEventListener('touchend', handleTouchEnd, { passive: false });
+    
+    // Mouse events
+    foodItems.forEach(item => {
+        item.addEventListener('mousedown', handleMouseDown);
+    });
+    document.addEventListener('mousemove', handleMouseMove);
+    document.addEventListener('mouseup', handleMouseUp);
 });
 
 

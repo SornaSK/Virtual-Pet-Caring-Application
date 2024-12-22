@@ -21,209 +21,11 @@ const petImages = {
     }
 };
 
-const foodImageMappings = {
-    'pizza': function() { return petImages[selectedPet].feedWithPizza; },
-    'bread': function() { return petImages[selectedPet].feedWithBread; },
-    'juice': function() { return petImages[selectedPet].feedWithJuice; },
-    'donut': function() { return petImages[selectedPet].feedWithDonut; }
-};
-
 const playSection = document.getElementById('playSection');
 const restSection = document.getElementById('restSection');
 const homePage = document.getElementById('homePage');
 const feedSection = document.getElementById('feedSection');
 const statusSection = document.getElementById('statusSection');
-
-
-// Touch event handling for mobile devices// Unified interaction handling for both touch and mouse events
-let isDragging = false;
-let currentDraggedElement = null;
-
-// Mouse event handlers
-function handleMouseDown(event) {
-    const clickedElement = event.target;
-    if (clickedElement.tagName === 'IMG' && clickedElement.parentElement.classList.contains('food-item')) {
-        event.preventDefault();
-        isDragging = true;
-        currentDraggedElement = clickedElement;
-        clickedElement.style.opacity = '0.7';
-    }
-}
-
-function handleMouseMove(event) {
-    if (!isDragging || !currentDraggedElement) return;
-    
-    event.preventDefault();
-    
-    // Create or update the dragging preview
-    let preview = document.getElementById('drag-preview');
-    if (!preview) {
-        preview = document.createElement('div');
-        preview.id = 'drag-preview';
-        preview.style.cssText = `
-            position: fixed;
-            pointer-events: none;
-            z-index: 1000;
-            width: 50px;
-            height: 50px;
-            background-image: url(${currentDraggedElement.src});
-            background-size: contain;
-            background-repeat: no-repeat;
-            background-position: center;
-            opacity: 0.8;
-        `;
-        document.body.appendChild(preview);
-    }
-    
-    // Update preview position
-    preview.style.left = `${event.pageX - 25}px`;
-    preview.style.top = `${event.pageY - 25}px`;
-}
-
-function handleMouseUp(event) {
-    if (!isDragging || !currentDraggedElement) return;
-    
-    event.preventDefault();
-    
-    // Get the element at the current position
-    const dropTarget = document.elementFromPoint(event.clientX, event.clientY);
-    
-    // Check if we dropped on the pet image
-    if (dropTarget && dropTarget.id === 'petImage') {
-        const foodType = currentDraggedElement.id;
-        if (foodImageMappings[foodType]) {
-            showFoodMessage(foodType, dropTarget);
-            dropTarget.src = foodImageMappings[foodType]();
-            setTimeout(() => {
-                dropTarget.src = petImages[selectedPet].feed;
-            }, 3000);
-            handleFeeding();
-        }
-    }
-    
-    // Clean up
-    isDragging = false;
-    if (currentDraggedElement) {
-        currentDraggedElement.style.opacity = '1';
-    }
-    currentDraggedElement = null;
-    
-    // Remove preview
-    const preview = document.getElementById('drag-preview');
-    if (preview) {
-        preview.remove();
-    }
-}
-
-// Touch event handlers (same as before but with different event properties)
-function handleTouchStart(event) {
-    const touchedElement = event.target;
-    if (touchedElement.tagName === 'IMG' && touchedElement.parentElement.classList.contains('food-item')) {
-        event.preventDefault();
-        isDragging = true;
-        currentDraggedElement = touchedElement;
-        touchedElement.style.opacity = '0.7';
-    }
-}
-
-function handleTouchMove(event) {
-    if (!isDragging || !currentDraggedElement) return;
-    
-    event.preventDefault();
-    
-    const touch = event.touches[0];
-    let preview = document.getElementById('drag-preview');
-    if (!preview) {
-        preview = document.createElement('div');
-        preview.id = 'drag-preview';
-        preview.style.cssText = `
-            position: fixed;
-            pointer-events: none;
-            z-index: 1000;
-            width: 50px;
-            height: 50px;
-            background-image: url(${currentDraggedElement.src});
-            background-size: contain;
-            background-repeat: no-repeat;
-            background-position: center;
-            opacity: 0.8;
-        `;
-        document.body.appendChild(preview);
-    }
-    
-    preview.style.left = `${touch.pageX - 25}px`;
-    preview.style.top = `${touch.pageY - 25}px`;
-}
-
-function handleTouchEnd(event) {
-    if (!isDragging || !currentDraggedElement) return;
-    
-    event.preventDefault();
-    
-    const touch = event.changedTouches[0];
-    const dropTarget = document.elementFromPoint(touch.clientX, touch.clientY);
-    
-    if (dropTarget && dropTarget.id === 'petImage') {
-        const foodType = currentDraggedElement.id;
-        if (foodImageMappings[foodType]) {
-            showFoodMessage(foodType, dropTarget);
-            dropTarget.src = foodImageMappings[foodType]();
-            setTimeout(() => {
-                dropTarget.src = petImages[selectedPet].feed;
-            }, 3000);
-            handleFeeding();
-        }
-    }
-    
-    isDragging = false;
-    if (currentDraggedElement) {
-        currentDraggedElement.style.opacity = '1';
-    }
-    currentDraggedElement = null;
-    
-    const preview = document.getElementById('drag-preview');
-    if (preview) {
-        preview.remove();
-    }
-}
-
-// Add style for interaction feedback
-const interactionStyle = document.createElement('style');
-interactionStyle.textContent = `
-    .food-item img {
-        touch-action: none;
-        -webkit-touch-callout: none;
-        -webkit-user-select: none;
-        user-select: none;
-        cursor: pointer;
-    }
-    
-    .food-item img:active {
-        opacity: 0.7;
-    }
-`;
-document.head.appendChild(interactionStyle);
-
-// Add event listeners for both touch and mouse events
-document.addEventListener('DOMContentLoaded', () => {
-    const foodItems = document.querySelectorAll('.food-item img');
-    
-    // Touch events
-    foodItems.forEach(item => {
-        item.addEventListener('touchstart', handleTouchStart, { passive: false });
-    });
-    document.addEventListener('touchmove', handleTouchMove, { passive: false });
-    document.addEventListener('touchend', handleTouchEnd, { passive: false });
-    
-    // Mouse events
-    foodItems.forEach(item => {
-        item.addEventListener('mousedown', handleMouseDown);
-    });
-    document.addEventListener('mousemove', handleMouseMove);
-    document.addEventListener('mouseup', handleMouseUp);
-});
-
-
 
 // Modify your initial page display logic
 document.getElementById('introPage').style.display = 'flex';
@@ -276,26 +78,71 @@ function showSection(section) {
 
 // Handle drag over event to allow dropping
 // Store image mappings for different food items
+const foodImageMappings = {
+    'pizza': function() { return petImages[selectedPet].feedWithPizza; },
+    'bread': function() { return petImages[selectedPet].feedWithBread; },
+    'juice': function() { return petImages[selectedPet].feedWithJuice; },
+    'donut': function() { return petImages[selectedPet].feedWithDonut; }
+};
 
+// Handle the drag start event
+// First, add the drag start handler function
+// Function to start the drag (for both mouse and touch)
+function dragStart(event) {
+    if (event.type === "touchstart") {
+        event.preventDefault(); // Prevents the default behavior for touch devices
+        event = event.touches[0]; // Gets the first touch point
+    }
+    
+    // Set the dragged element's ID as data to be used in the drop event
+    var draggedElement = event.target;
+    draggedElement.classList.add('dragging');
 
-// Add this style to your CSS file
-const style = document.createElement('style');
-style.textContent = `
-    .food-message {
-        position: absolute;
-        background: white;
-        padding: 10px;
-        border-radius: 5px;
-        box-shadow: 0 2px 5px rgba(0,0,0,0.2);
-        animation: fadeOut 2s;
+    // For mouse events (laptop view)
+    if (event.type === "mousedown") {
+        document.addEventListener("mousemove", dragMove);
+        document.addEventListener("mouseup", dragEnd);
     }
 
-    @keyframes fadeOut {
-        0% { opacity: 1; }
-        100% { opacity: 0; }
+    // For touch events (mobile view)
+    if (event.type === "touchstart") {
+        document.addEventListener("touchmove", dragMove);
+        document.addEventListener("touchend", dragEnd);
     }
-`;
-document.head.appendChild(style);
+}
+
+// Function to handle the drag move
+function dragMove(event) {
+    // Prevent default behavior for touch devices
+    if (event.type === "touchmove") {
+        event.preventDefault();
+        event = event.touches[0]; // Gets the first touch point
+    }
+
+    // Get the dragged element
+    var draggedElement = document.querySelector('.dragging');
+    if (draggedElement) {
+        // Move the dragged element based on the event coordinates
+        draggedElement.style.left = (event.pageX || event.touches[0].pageX) + 'px';
+        draggedElement.style.top = (event.pageY || event.touches[0].pageY) + 'px';
+    }
+}
+
+// Function to handle the drag end
+function dragEnd(event) {
+    var draggedElement = document.querySelector('.dragging');
+    if (draggedElement) {
+        draggedElement.classList.remove('dragging');
+        draggedElement.style.left = ''; // Reset position
+        draggedElement.style.top = ''; // Reset position
+    }
+
+    // Remove event listeners after drag is done
+    document.removeEventListener("mousemove", dragMove);
+    document.removeEventListener("mouseup", dragEnd);
+    document.removeEventListener("touchmove", dragMove);
+    document.removeEventListener("touchend", dragEnd);
+}
 
 // Simple messages for each food
 const foodMessages = {
@@ -317,6 +164,26 @@ function showFoodMessage(foodType, petImage) {
     setTimeout(() => message.remove(), 2000);
 }
 
+// Drop event handler
+document.addEventListener('drop', (event) => {
+    event.preventDefault();
+    const petImage = document.getElementById('petImage');
+    if (event.target === petImage) {
+        const droppedFoodId = event.dataTransfer.getData('text/plain');
+        if (foodImageMappings[droppedFoodId]) {
+            showFoodMessage(droppedFoodId, petImage);
+            petImage.src = foodImageMappings[droppedFoodId]();
+            setTimeout(() => {
+                petImage.src = petImages[selectedPet].feed;
+            }, 3000);
+            handleFeeding();
+        }
+    }
+});
+
+document.addEventListener('dragover', (event) => {
+    event.preventDefault(); 
+});
 
 const grid = document.getElementById('grid');
 const scoreBoard = document.getElementById('score');
@@ -635,6 +502,11 @@ showAlert('I am sad! Play with them.');
 }
 }
 
+
+
+// Event listeners for interactions
+document.addEventListener('drop', (event) => {
+event.preventDefault();
 const petImage = document.getElementById('petImage');
 
 if (event.target === petImage) {

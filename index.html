@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Virtual Pet Caring</title>
+    <link rel="stylesheet" href="index.css">
+</head>
+
+<body>
+    <div class="intro-page" id="introPage">
+        <img src="./image/footprint.png" alt="Pet Care Logo" class="intro-logo" id="introPetLogo">
+    </div>
+    <!-- Add this after the intro-page div and before the home-page div -->
+    <div id="petSelectionPage" class="container hidden">
+        <h2>Choose Your Pet</h2>
+        <img src="./image/puppy-and-kitty.png" alt="Select Puppy">
+        <div class="pet-selection-buttons">
+            <div class="pet-option">
+                <button id="buttons" onclick="selectPet('puppy')">Choose Puppy</button>
+            </div>
+            <div class="pet-option">
+                <button id="buttons" onclick="selectPet('kitty')">Choose Kitty</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Add this div after the h1 tag in your container div -->
+    <div class="status-bars" id="statusSection">
+        <div class="progress-wrapper">
+            <div class="progress-circle" id="hungryProgress">
+                <svg class="progress-ring" width="60" height="60">
+                    <circle class="progress-ring-circle" stroke="#ff9999" stroke-width="4" fill="transparent" r="25"
+                        cx="30" cy="30" />
+                </svg>
+                <div class="progress-value">100%</div>
+            </div>
+            <div class="status-label">Hungry</div>
+        </div>
+        <div class="progress-wrapper">
+            <div class="progress-circle" id="energyProgress">
+                <svg class="progress-ring" width="60" height="60">
+                    <circle class="progress-ring-circle" stroke="#99ff99" stroke-width="4" fill="transparent" r="25"
+                        cx="30" cy="30" />
+                </svg>
+                <div class="progress-value">100%</div>
+            </div>
+            <div class="status-label">Energy</div>
+        </div>
+        <div class="progress-wrapper">
+            <div class="progress-circle" id="happyProgress">
+                <svg class="progress-ring" width="60" height="60">
+                    <circle class="progress-ring-circle" stroke="#9999ff" stroke-width="4" fill="transparent" r="25"
+                        cx="30" cy="30" />
+                </svg>
+                <div class="progress-value">100%</div>
+            </div>
+            <div class="status-label">Happy</div>
+        </div>
+    </div>
+    <!--Homepage-->
+    <div id="homePage" class="container">
+        <img style="width: 350px; height: 350px;" id="homeimage" src="./image/puppyhomeimage.png"
+            alt="Pet Sleeping">
+        <div id="homebuttons">
+            <button id="buttons" onclick="showSection('feed')">Feed</button>
+            <button id="buttons" onclick="showSection('play')">Play</button>
+            <button id="buttons" onclick="showSection('rest')">Rest</button>
+        </div>
+    </div>
+    <!-- Feed Section -->
+    <div id="feedSection" class="container hidden">
+        <div class="pet-container">
+            <img class="pet" id="petImage" src="./image/cat-with-plate.png" alt="Pet">
+
+        </div>
+        <div class="plate">
+            <img src="./image/pizza.png" alt="Pizza" draggable="true" ondragstart="dragStart(event)" id="pizza">
+            <img src="./image/bread.png" alt="Bread" draggable="true" ondragstart="dragStart(event)" id="bread">
+            <img src="./image/milkshake.png" alt="Bone" draggable="true" ondragstart="dragStart(event)" id="juice">
+            <img src="./image/donut.png" alt="Donut" draggable="true" ondragstart="dragStart(event)" id="donut">
+        </div>
+        <button id="buttons" onclick="goHome()">Back to Home</button>
+    </div>
+    <!-- Play Section -->
+    <div id="playSection" class="container hidden">
+        <h1>Hide and Seek</h1>
+        <div id="scoreBoard">
+            <span id="score">Score: 0</span> |
+            <span id="timer">Time Left: 30s</span>
+        </div>
+        <div id="gameContainer">
+            <div id="grid"></div>
+            <div id="gameOverMessage" class="hidden">Game Over!</div>
+        </div>
+        <button id="buttons" onclick="restartGame()">Restart</button>
+        <button id="buttons" onclick="goHome()">Exit Game</button>
+    </div>
+    <!-- Rest Section -->
+    <div id="restSection" class="container hidden">
+        <img style="width: 400px; height: 400px;" src="./image/puppy-sleep.png" alt="Pet Sleeping">
+        <button id="lightButton" type="button">Turn Off Light</button>
+        <button id="buttons" onclick="goHome()">Back to Home</button>
+    </div>
+    <!-- alert -->
+    <div class="alert-popup" id="alertPopup">
+        <p id="alertMessage"></p>
+        <button id="buttons" onclick="closeAlert()">OK</button>
+    </div>
+    <script src="index.js"></script>
+</body>
+
+</html>

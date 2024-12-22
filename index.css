@@ -115,6 +115,23 @@ body {
     cursor: grab;
 }
 
+.plate img.food-item {
+    width: 50px;
+    margin: 5px;
+    cursor: grab;
+}
+
+.plate img.food-item:active {
+    cursor: grabbing;
+}
+
+#petImage {
+    width: 200px;
+    height: auto;
+    margin-top: 20px;
+    border: 2px dashed #ccc;
+}
+
 /* Rest Section Styles */
 #restSection {
     transition: background-color 0.3s ease, color 0.3s ease;

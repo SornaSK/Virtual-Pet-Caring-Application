@@ -1,4 +1,4 @@
-let selectedPet = '';
+let selectedPet = 'kitty';  // Change 'kitty' to 'puppy' as needed
 
 const petImages = {
     puppy: {
@@ -20,6 +20,7 @@ const petImages = {
         feedWithDonut: './image/kitty-with-donut.png'
     }
 };
+
 
 const playSection = document.getElementById('playSection');
 const restSection = document.getElementById('restSection');
@@ -109,6 +110,19 @@ style.textContent = `
 `;
 document.head.appendChild(style);
 
+
+
+// Function to show message
+function showFoodMessage(foodType, petImage) {
+    const message = document.createElement('div');
+    message.className = 'food-message';
+    message.textContent = foodMessages[foodType] || "Yummy!";
+    const petPosition = petImage.getBoundingClientRect();
+    message.style.left = (petPosition.left + 50) + 'px';
+    message.style.top = (petPosition.top + 20) + 'px';
+    document.body.appendChild(message);
+    setTimeout(() => message.remove(), 2000);
+}
 // Simple messages for each food
 const foodMessages = {
     pizza: "Yummy! 🍕",
@@ -117,38 +131,27 @@ const foodMessages = {
     donut: "Sweet! 🍩"
 };
 
-// Function to show message
-function showFoodMessage(foodType, petImage) {
-    const message = document.createElement('div');
-    message.className = 'food-message';
-    message.textContent = foodMessages[foodType] || "Yummy!";
-    const petPosition = petImage.getBoundingClientRect();
-    message.style.left = (petPosition.left + 50) + 'px'; 
-    message.style.top = (petPosition.top + 20) + 'px';   
-    document.body.appendChild(message);
-    setTimeout(() => message.remove(), 2000);
+function dragStart(event) {
+    event.dataTransfer.setData('text/plain', event.target.id);
 }
 
-// Drop event handler
+// Handle the drop event for feeding
 document.addEventListener('drop', (event) => {
     event.preventDefault();
     const petImage = document.getElementById('petImage');
     if (event.target === petImage) {
         const droppedFoodId = event.dataTransfer.getData('text/plain');
         if (foodImageMappings[droppedFoodId]) {
-            showFoodMessage(droppedFoodId, petImage);
             petImage.src = foodImageMappings[droppedFoodId]();
             setTimeout(() => {
                 petImage.src = petImages[selectedPet].feed;
-            }, 3000);
+            }, 3000); // Revert to feeding image after 3 seconds
+            showFoodMessage(droppedFoodId, petImage);
             handleFeeding();
         }
     }
 });
 
-document.addEventListener('dragover', (event) => {
-    event.preventDefault(); 
-});
 
 const grid = document.getElementById('grid');
 const scoreBoard = document.getElementById('score');
@@ -389,18 +392,16 @@ checkCriticalLevels();
 }
 
 
-// Handle feeding with range validation
-function handleFeeding() { 
-if (hungerLevel >= MAX_LEVEL) {
-showAlert("Pet is so hungry!");
+// Handle feeding with range validationfunction handleFeeding() { 
+    if (hungerLevel >= MAX_LEVEL) {
+        showAlert("Pet is so hungry!");
+        return;
+    }
 
-return;
-}
-
-hungerLevel = clampValue(hungerLevel - 15);
-energyLevel = clampValue(energyLevel + 10);
-happinessLevel = clampValue(happinessLevel + 10);
-updateAllProgress();
+    hungerLevel = clampValue(hungerLevel - 15);
+    energyLevel = clampValue(energyLevel + 10);
+    happinessLevel = clampValue(happinessLevel + 10);
+    updateAllProgress();
 }
 
 // Handle playing with range validation

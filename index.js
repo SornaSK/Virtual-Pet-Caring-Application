@@ -87,64 +87,27 @@ const foodImageMappings = {
 
 // Handle the drag start event
 // First, add the drag start handler function
-// Function to start the drag (for both mouse and touch)
-// Function to start the drag (for both mouse and touch)
 function dragStart(event) {
-    // For touchstart event (mobile view)
-    if (event.type === "touchstart") {
-        event.preventDefault(); // Prevents the default behavior for touch devices
-        event = event.touches[0]; // Gets the first touch point
-    }
-    
-    // Set the dragged element's ID as data to be used in the drop event
-    var draggedElement = event.target;
-    draggedElement.classList.add('dragging');
-
-    // For mouse events (laptop/desktop view)
-    if (event.type === "mousedown") {
-        document.addEventListener("mousemove", dragMove);
-        document.addEventListener("mouseup", dragEnd);
-    }
-
-    // For touch events (mobile view)
-    if (event.type === "touchstart") {
-        document.addEventListener("touchmove", dragMove);
-        document.addEventListener("touchend", dragEnd);
-    }
+    event.dataTransfer.setData('text/plain', event.target.id);
 }
-
-// Function to handle the drag move (for both mouse and touch)
-function dragMove(event) {
-    // For touchmove event (mobile view)
-    if (event.type === "touchmove") {
-        event.preventDefault(); // Prevents scrolling while dragging on mobile
-        event = event.touches[0]; // Gets the first touch point
+// Add this style to your CSS file
+const style = document.createElement('style');
+style.textContent = `
+    .food-message {
+        position: absolute;
+        background: white;
+        padding: 10px;
+        border-radius: 5px;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        animation: fadeOut 2s;
     }
 
-    // Get the dragged element
-    var draggedElement = document.querySelector('.dragging');
-    if (draggedElement) {
-        // Move the dragged element based on the event coordinates
-        draggedElement.style.left = (event.pageX || event.touches[0].pageX) - draggedElement.offsetWidth / 2 + 'px';
-        draggedElement.style.top = (event.pageY || event.touches[0].pageY) - draggedElement.offsetHeight / 2 + 'px';
+    @keyframes fadeOut {
+        0% { opacity: 1; }
+        100% { opacity: 0; }
     }
-}
-
-// Function to handle the drag end (for both mouse and touch)
-function dragEnd(event) {
-    var draggedElement = document.querySelector('.dragging');
-    if (draggedElement) {
-        draggedElement.classList.remove('dragging');
-        draggedElement.style.left = ''; // Reset position
-        draggedElement.style.top = ''; // Reset position
-    }
-
-    // Remove event listeners after drag is done
-    document.removeEventListener("mousemove", dragMove);
-    document.removeEventListener("mouseup", dragEnd);
-    document.removeEventListener("touchmove", dragMove);
-    document.removeEventListener("touchend", dragEnd);
-}
+`;
+document.head.appendChild(style);
 
 // Simple messages for each food
 const foodMessages = {

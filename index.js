@@ -155,7 +155,7 @@ const scoreBoard = document.getElementById('score');
 const timerBoard = document.getElementById('timer');
 const gameOverMessage = document.getElementById('gameOverMessage');
 const holes = 16;
-const gameTime = 30; 
+const gameTime = 30;
 let score = 0;
 let timeLeft = gameTime;
 let gameInterval, spawnInterval;
@@ -169,6 +169,7 @@ const assets = {
 
 // Create the grid
 function createGrid() {
+    grid.innerHTML = ''; // Clear grid before creating
     for (let i = 0; i < holes; i++) {
         const hole = document.createElement('div');
         hole.classList.add('hole');
@@ -238,56 +239,48 @@ function startTimer() {
 }
 
 let gameRunning = false;
+
 // Start game logic
 const spawnIntervalTimeBefore15 = 2000;
-const spawnIntervalTimeAfter15 = 2500; 
+const spawnIntervalTimeAfter15 = 2500;
 function startGame() {
-    if (gameRunning) return; 
+    if (gameRunning) return;
     gameRunning = true;
-    grid.innerHTML = ''; 
-    createGrid()
+    score = 0;
+    timeLeft = gameTime;
+    grid.innerHTML = '';
+    gameOverMessage.classList.add('hidden');
+    createGrid();
+    grid.addEventListener('click', handleClick); // Re-attach the event listener
     updateScore();
     startTimer();
     spawnInterval = setInterval(() => {
         if (timeLeft < 15) {
-            clearInterval(spawnInterval); 
-            spawnInterval = setInterval(randomizeContent, spawnIntervalTimeAfter15); 
+            clearInterval(spawnInterval);
+            spawnInterval = setInterval(randomizeContent, spawnIntervalTimeAfter15);
         }
         randomizeContent();
     }, spawnIntervalTimeBefore15);
 }
+
 // End game
 function endGame(success) {
     gameRunning = false;
     clearInterval(gameInterval);
     clearInterval(spawnInterval);
+    grid.removeEventListener('click', handleClick); // Remove the event listener
     grid.innerHTML = '';
-    grid.removeEventListener('click', handleClick);
     gameOverMessage.classList.remove('hidden');
     gameOverMessage.textContent = success
         ? `Game Over! Your score is ${score}.`
         : `You hit a bomb! Game Over.`;
-        showAlert('Pet enjoyed playing the game!');
-    if (success) {
-        setTimeout(() => {
-            handlePlaying();
-           
-        }, 1000);
-    }
 }
 
-// Attach event listeners
-grid.addEventListener('click', handleClick);
-startGame();
-
+// Restart the game
 function restartGame() {
     clearInterval(gameInterval);
     clearInterval(spawnInterval);
     gameRunning = false;
-    score = 0;
-    timeLeft = gameTime;
-    grid.innerHTML = ''; 
-    gameOverMessage.classList.add('hidden'); 
     startGame();
 }
 
@@ -474,30 +467,7 @@ showAlert('I am sad! Play with them.');
 }
 }
 
-// Game score handling with status updates
-function handleGameScore() {
-score++;
-handlePlaying();
-scoreBoard.textContent = `Score: ${score}`;
-timerBoard.textContent = `Time Left: ${timeLeft}s`;
-}
 
-// Game click handler
-function handleClick(e) {
-if (e.target.tagName !== 'IMG') return;
-
-const type = e.target.dataset.type;
-if (type === 'mouse') {
-handleGameScore();
-} else if (type === 'bomb') {
-endGame(false);
-} else if (type === 'timer') {
-timeLeft += 10;
-updateScore();
-}
-
-e.target.remove();
-}
 
 // Event listeners for interactions
 document.addEventListener('drop', (event) => {

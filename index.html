@@ -70,19 +70,28 @@
         </div>
     </div>
     <!-- Feed Section -->
-    <div id="feedSection" class="container hidden">
-        <div class="pet-container">
-            <img class="pet" id="petImage" src="./image/cat-with-plate.png" alt="Pet">
-
-        </div>
-        <div class="plate">
-            <img src="./image/pizza.png" alt="Pizza" draggable="true" ondragstart="dragStart(event)" id="pizza">
-            <img src="./image/bread.png" alt="Bread" draggable="true" ondragstart="dragStart(event)" id="bread">
-            <img src="./image/milkshake.png" alt="Bone" draggable="true" ondragstart="dragStart(event)" id="juice">
-            <img src="./image/donut.png" alt="Donut" draggable="true" ondragstart="dragStart(event)" id="donut">
-        </div>
-        <button id="buttons" onclick="goHome()">Back to Home</button>
+<!-- Feed Section -->
+<div id="feedSection" class="container hidden">
+    <div class="pet-container">
+        <img class="pet" id="petImage" src="./image/cat-with-plate.png" alt="Pet">
     </div>
+    <div class="plate">
+        <!-- Wrap each food item in a div with food-item class -->
+        <div class="food-item">
+            <img src="./image/pizza.png" alt="Pizza" id="pizza">
+        </div>
+        <div class="food-item">
+            <img src="./image/bread.png" alt="Bread" id="bread">
+        </div>
+        <div class="food-item">
+            <img src="./image/milkshake.png" alt="Juice" id="juice">
+        </div>
+        <div class="food-item">
+            <img src="./image/donut.png" alt="Donut" id="donut">
+        </div>
+    </div>
+    <button id="buttons" onclick="goHome()">Back to Home</button>
+</div>
     <!-- Play Section -->
     <div id="playSection" class="container hidden">
         <h1>Hide and Seek</h1>

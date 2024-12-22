@@ -1,4 +1,52 @@
 let selectedPet = '';
+const isMobile = window.matchMedia("(max-width: 768px)").matches;
+
+// Handle the drag start event for non-mobile devices
+function dragStart(event) {
+    if (isMobile) {
+        return; // Skip drag start for mobile
+    }
+    event.dataTransfer.setData('text/plain', event.target.id);
+}
+
+// Handle touch events for mobile view
+function handleTouchStart(event) {
+    if (!isMobile) {
+        return; // Skip touch events for non-mobile
+    }
+
+    // Ensure the event works for touchstart, target the food item
+    const touchedElement = event.target;
+    if (touchedElement.tagName.toLowerCase() === 'img' && touchedElement.parentElement.id === 'feedSection') {
+        const foodId = touchedElement.id;
+        handleFoodTouch(foodId);
+    }
+}
+
+// Function to handle food item touch for mobile view
+function handleFoodTouch(foodId) {
+    if (foodImageMappings[foodId]) {
+        const petImage = document.getElementById('petImage');
+        showFoodMessage(foodId, petImage);
+        petImage.src = foodImageMappings[foodId]();
+        setTimeout(() => {
+            petImage.src = petImages[selectedPet].feed;
+        }, 3000);
+        handleFeeding();
+    }
+}
+
+
+// Handle dragover event for non-mobile
+document.addEventListener('dragover', (event) => {
+    if (isMobile) return; // Disable dragover for mobile
+    event.preventDefault();
+});
+
+// Add touch event listeners for mobile view
+document.querySelectorAll('#feedSection img.food-item').forEach(item => {
+    item.addEventListener('touchstart', handleTouchStart, { passive: true });
+});
 
 const petImages = {
     puppy: {
@@ -20,67 +68,6 @@ const petImages = {
         feedWithDonut: './image/kitty-with-donut.png'
     }
 };
-const isMobile = window.matchMedia("(max-width: 768px)").matches;
-
-// Handle the drag start event for non-mobile devices
-function dragStart(event) {
-    if (isMobile) {
-        return; // Skip drag start for mobile
-    }
-    event.dataTransfer.setData('text/plain', event.target.id);
-}
-
-// Handle touch events for mobile view
-function handleTouchStart(event) {
-    if (!isMobile) {
-        return; // Skip touch events for non-mobile
-    }
-    const touchedElement = event.target;
-    if (touchedElement.tagName.toLowerCase() === 'img' && touchedElement.parentElement.id === 'feedSection') {
-        const foodId = touchedElement.id;
-        handleFoodTouch(foodId);
-    }
-}
-
-// Function to handle food item touch for mobile view
-function handleFoodTouch(foodId) {
-    if (foodImageMappings[foodId]) {
-        const petImage = document.getElementById('petImage');
-        showFoodMessage(foodId, petImage);
-        petImage.src = foodImageMappings[foodId]();
-        setTimeout(() => {
-            petImage.src = petImages[selectedPet].feed;
-        }, 3000);
-        handleFeeding();
-    }
-}
-
-// Handle the drop event for non-mobile devices
-document.addEventListener('drop', (event) => {
-    if (isMobile) return; // Disable drop for mobile
-    event.preventDefault();
-    const petImage = document.getElementById('petImage');
-    if (event.target === petImage) {
-        const droppedFoodId = event.dataTransfer.getData('text/plain');
-        if (foodImageMappings[droppedFoodId]) {
-            showFoodMessage(droppedFoodId, petImage);
-            petImage.src = foodImageMappings[droppedFoodId]();
-            setTimeout(() => {
-                petImage.src = petImages[selectedPet].feed;
-            }, 3000);
-            handleFeeding();
-        }
-    }
-});
-
-// Handle dragover event for non-mobile devices
-document.addEventListener('dragover', (event) => {
-    if (isMobile) return; // Disable dragover for mobile
-    event.preventDefault(); 
-});
-
-// Add touch event listeners for mobile view
-document.addEventListener('touchstart', handleTouchStart, { passive: true });
 
 const playSection = document.getElementById('playSection');
 const restSection = document.getElementById('restSection');
@@ -190,8 +177,11 @@ function showFoodMessage(foodType, petImage) {
     setTimeout(() => message.remove(), 2000);
 }
 
+
 // Drop event handler
+// Drop event for non-mobile
 document.addEventListener('drop', (event) => {
+    if (isMobile) return; // Disable drop for mobile
     event.preventDefault();
     const petImage = document.getElementById('petImage');
     if (event.target === petImage) {

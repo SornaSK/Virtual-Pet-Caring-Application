@@ -114,14 +114,6 @@ body {
     margin: 10px;
     cursor: grab;
 }
-/* Style for the dragged element */
-.food-item.dragging {
-    position: absolute;
-    z-index: 1000; /* Ensures the dragged item appears above other content */
-    cursor: grabbing;
-    pointer-events: none; /* Prevents other elements from blocking the drag */
-}
-
 
 /* Rest Section Styles */
 #restSection {

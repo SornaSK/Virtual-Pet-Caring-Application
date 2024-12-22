@@ -88,7 +88,9 @@ const foodImageMappings = {
 // Handle the drag start event
 // First, add the drag start handler function
 // Function to start the drag (for both mouse and touch)
+// Function to start the drag (for both mouse and touch)
 function dragStart(event) {
+    // For touchstart event (mobile view)
     if (event.type === "touchstart") {
         event.preventDefault(); // Prevents the default behavior for touch devices
         event = event.touches[0]; // Gets the first touch point
@@ -98,7 +100,7 @@ function dragStart(event) {
     var draggedElement = event.target;
     draggedElement.classList.add('dragging');
 
-    // For mouse events (laptop view)
+    // For mouse events (laptop/desktop view)
     if (event.type === "mousedown") {
         document.addEventListener("mousemove", dragMove);
         document.addEventListener("mouseup", dragEnd);
@@ -111,11 +113,11 @@ function dragStart(event) {
     }
 }
 
-// Function to handle the drag move
+// Function to handle the drag move (for both mouse and touch)
 function dragMove(event) {
-    // Prevent default behavior for touch devices
+    // For touchmove event (mobile view)
     if (event.type === "touchmove") {
-        event.preventDefault();
+        event.preventDefault(); // Prevents scrolling while dragging on mobile
         event = event.touches[0]; // Gets the first touch point
     }
 
@@ -123,12 +125,12 @@ function dragMove(event) {
     var draggedElement = document.querySelector('.dragging');
     if (draggedElement) {
         // Move the dragged element based on the event coordinates
-        draggedElement.style.left = (event.pageX || event.touches[0].pageX) + 'px';
-        draggedElement.style.top = (event.pageY || event.touches[0].pageY) + 'px';
+        draggedElement.style.left = (event.pageX || event.touches[0].pageX) - draggedElement.offsetWidth / 2 + 'px';
+        draggedElement.style.top = (event.pageY || event.touches[0].pageY) - draggedElement.offsetHeight / 2 + 'px';
     }
 }
 
-// Function to handle the drag end
+// Function to handle the drag end (for both mouse and touch)
 function dragEnd(event) {
     var draggedElement = document.querySelector('.dragging');
     if (draggedElement) {

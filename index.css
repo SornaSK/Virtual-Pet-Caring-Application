@@ -78,17 +78,25 @@ body {
 }
 
 /* Feed Section Styles */
-.feed-section img.pet {
-    width: 150px;
+.pet-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 20px 0;
+}
+
+.pet {
+    max-width: 200px;
     height: auto;
-    margin: 10px 0;
 }
 
 .plate {
     display: flex;
     justify-content: center;
     align-items: center;
-    margin: 20px 0;
+    flex-wrap: wrap;
+    gap: 20px;
+    padding: 20px;
 }
 
 .plate img {
@@ -108,30 +116,67 @@ body {
     border: 2px dashed #ccc;
 }
 
-#foodItem {
+/* Styles for food items */
+.food-item {
+    position: relative;
+    width: 60px;
+    height: 60px;
+    cursor: pointer;
+}
+
+.food-item img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    touch-action: none;
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    user-select: none;
+    transition: opacity 0.2s;
+}
+#drag-preview {
+    position: fixed;
+    pointer-events: none;
+    z-index: 1000;
     width: 50px;
-    height: auto;
-    margin: 10px;
-    cursor: grab;
+    height: 50px;
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
 }
 
-.plate img.food-item {
-    width: 50px;
-    margin: 5px;
-    cursor: grab;
+/* Mobile-specific adjustments */
+@media (max-width: 768px) {
+    .food-item {
+        width: 50px;
+        height: 50px;
+    }
+
+    .plate {
+        gap: 15px;
+        padding: 15px;
+    }
+
+    .pet {
+        max-width: 150px;
+    }
 }
 
-.plate img.food-item:active {
-    cursor: grabbing;
+/* Food message animation styles */
+.food-message {
+    position: absolute;
+    background: white;
+    padding: 10px;
+    border-radius: 5px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+    animation: fadeOut 2s;
+    z-index: 1001;
 }
 
-#petImage {
-    width: 200px;
-    height: auto;
-    margin-top: 20px;
-    border: 2px dashed #ccc;
+@keyframes fadeOut {
+    0% { opacity: 1; }
+    100% { opacity: 0; }
 }
-
 /* Rest Section Styles */
 #restSection {
     transition: background-color 0.3s ease, color 0.3s ease;

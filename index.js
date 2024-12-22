@@ -150,6 +150,76 @@ document.addEventListener('dragover', (event) => {
     event.preventDefault(); 
 });
 
+let draggedElement = null; // For tracking the currently dragged item
+
+// Handle drag start (desktop)
+function dragStart(event) {
+    event.dataTransfer.setData('text/plain', event.target.id);
+    draggedElement = event.target; // Keep track of the dragged element
+}
+
+// Handle touch start (mobile)
+function touchStart(event) {
+    draggedElement = event.target; // Set the element being touched
+    draggedElement.style.opacity = '0.6'; // Optional: Add some visual feedback
+}
+
+// Handle touch move
+function touchMove(event) {
+    event.preventDefault();
+    const touch = event.touches[0];
+    const draggedClone = draggedElement.cloneNode(true); // Optional: visual feedback of dragging
+    draggedElement.style.position = 'absolute';
+    draggedElement.style.left = `${touch.clientX - 20}px`; // Adjust position for feedback
+    draggedElement.style.top = `${touch.clientY - 20}px`;
+}
+
+// Handle touch end
+function touchEnd(event) {
+    event.preventDefault();
+    const petImage = document.getElementById('petImage');
+    const petPosition = petImage.getBoundingClientRect();
+
+    // Check if the touch ends over the pet image
+    const touch = event.changedTouches[0];
+    if (
+        touch.clientX >= petPosition.left &&
+        touch.clientX <= petPosition.right &&
+        touch.clientY >= petPosition.top &&
+        touch.clientY <= petPosition.bottom
+    ) {
+        const foodType = draggedElement.id; // Use the id of the dragged element
+        if (foodImageMappings[foodType]) {
+            showFoodMessage(foodType, petImage);
+            petImage.src = foodImageMappings[foodType]();
+            setTimeout(() => {
+                petImage.src = petImages[selectedPet].feed;
+            }, 3000);
+            handleFeeding();
+        }
+    }
+
+    // Reset styles
+    draggedElement.style.opacity = '1';
+    draggedElement.style.position = 'relative';
+    draggedElement.style.left = 'auto';
+    draggedElement.style.top = 'auto';
+    draggedElement = null; // Reset dragged element
+}
+
+// Attach listeners to draggable food items
+const foodItems = document.querySelectorAll('.food-item');
+foodItems.forEach((foodItem) => {
+    // Desktop drag-and-drop
+    foodItem.addEventListener('dragstart', dragStart);
+
+    // Mobile touch events
+    foodItem.addEventListener('touchstart', touchStart);
+    foodItem.addEventListener('touchmove', touchMove);
+    foodItem.addEventListener('touchend', touchEnd);
+});
+
+
 const grid = document.getElementById('grid');
 const scoreBoard = document.getElementById('score');
 const timerBoard = document.getElementById('timer');

@@ -1,4 +1,4 @@
-let selectedPet = 'kitty';  // Change 'kitty' to 'puppy' as needed
+let selectedPet = '';
 
 const petImages = {
     puppy: {
@@ -20,7 +20,6 @@ const petImages = {
         feedWithDonut: './image/kitty-with-donut.png'
     }
 };
-
 
 const playSection = document.getElementById('playSection');
 const restSection = document.getElementById('restSection');
@@ -110,19 +109,6 @@ style.textContent = `
 `;
 document.head.appendChild(style);
 
-
-
-// Function to show message
-function showFoodMessage(foodType, petImage) {
-    const message = document.createElement('div');
-    message.className = 'food-message';
-    message.textContent = foodMessages[foodType] || "Yummy!";
-    const petPosition = petImage.getBoundingClientRect();
-    message.style.left = (petPosition.left + 50) + 'px';
-    message.style.top = (petPosition.top + 20) + 'px';
-    document.body.appendChild(message);
-    setTimeout(() => message.remove(), 2000);
-}
 // Simple messages for each food
 const foodMessages = {
     pizza: "Yummy! 🍕",
@@ -131,27 +117,38 @@ const foodMessages = {
     donut: "Sweet! 🍩"
 };
 
-function dragStart(event) {
-    event.dataTransfer.setData('text/plain', event.target.id);
+// Function to show message
+function showFoodMessage(foodType, petImage) {
+    const message = document.createElement('div');
+    message.className = 'food-message';
+    message.textContent = foodMessages[foodType] || "Yummy!";
+    const petPosition = petImage.getBoundingClientRect();
+    message.style.left = (petPosition.left + 50) + 'px'; 
+    message.style.top = (petPosition.top + 20) + 'px';   
+    document.body.appendChild(message);
+    setTimeout(() => message.remove(), 2000);
 }
 
-// Handle the drop event for feeding
+// Drop event handler
 document.addEventListener('drop', (event) => {
     event.preventDefault();
     const petImage = document.getElementById('petImage');
     if (event.target === petImage) {
         const droppedFoodId = event.dataTransfer.getData('text/plain');
         if (foodImageMappings[droppedFoodId]) {
+            showFoodMessage(droppedFoodId, petImage);
             petImage.src = foodImageMappings[droppedFoodId]();
             setTimeout(() => {
                 petImage.src = petImages[selectedPet].feed;
-            }, 3000); // Revert to feeding image after 3 seconds
-            showFoodMessage(droppedFoodId, petImage);
+            }, 3000);
             handleFeeding();
         }
     }
 });
 
+document.addEventListener('dragover', (event) => {
+    event.preventDefault(); 
+});
 
 const grid = document.getElementById('grid');
 const scoreBoard = document.getElementById('score');
@@ -392,16 +389,18 @@ checkCriticalLevels();
 }
 
 
-// Handle feeding with range validationfunction handleFeeding() { 
-    if (hungerLevel >= MAX_LEVEL) {
-        showAlert("Pet is so hungry!");
-        return;
-    }
+// Handle feeding with range validation
+function handleFeeding() { 
+if (hungerLevel >= MAX_LEVEL) {
+showAlert("Pet is so hungry!");
 
-    hungerLevel = clampValue(hungerLevel - 15);
-    energyLevel = clampValue(energyLevel + 10);
-    happinessLevel = clampValue(happinessLevel + 10);
-    updateAllProgress();
+return;
+}
+
+hungerLevel = clampValue(hungerLevel - 15);
+energyLevel = clampValue(energyLevel + 10);
+happinessLevel = clampValue(happinessLevel + 10);
+updateAllProgress();
 }
 
 // Handle playing with range validation
@@ -511,6 +510,67 @@ restSection.style.color = "#666";
 handleResting();
 }
 }
+// Add touch event support for drag-and-drop
+document.addEventListener('touchstart', (event) => {
+    if (event.target.tagName === 'IMG' && event.target.id) {
+        event.dataTransfer = {
+            setData: (type, value) => event.target.dataset[type] = value,
+            getData: (type) => event.target.dataset[type],
+        };
+        event.dataTransfer.setData('text/plain', event.target.id);
+    }
+});
+
+document.addEventListener('touchmove', (event) => {
+    event.preventDefault();
+    const touch = event.touches[0];
+    const draggedElement = document.querySelector(`[data-text="${event.target.id}"]`);
+    if (draggedElement) {
+        draggedElement.style.position = 'absolute';
+        draggedElement.style.left = `${touch.pageX - draggedElement.offsetWidth / 2}px`;
+        draggedElement.style.top = `${touch.pageY - draggedElement.offsetHeight / 2}px`;
+    }
+});
+
+document.addEventListener('touchend', (event) => {
+    const targetElement = document.elementFromPoint(
+        event.changedTouches[0].clientX,
+        event.changedTouches[0].clientY
+    );
+    const petImage = document.getElementById('petImage');
+    if (targetElement === petImage) {
+        const droppedFoodId = event.target.id;
+        if (foodImageMappings[droppedFoodId]) {
+            showFoodMessage(droppedFoodId, petImage);
+            petImage.src = foodImageMappings[droppedFoodId]();
+            setTimeout(() => {
+                petImage.src = petImages[selectedPet].feed;
+            }, 3000);
+            handleFeeding();
+        }
+    }
+});
+
+// Adjust the click/touch event logic for game grid
+grid.addEventListener('click', handleClick);
+grid.addEventListener('touchstart', (e) => {
+    const touch = e.touches[0];
+    const target = document.elementFromPoint(touch.clientX, touch.clientY);
+    if (target && target.tagName === 'IMG') {
+        const clickEvent = new MouseEvent('click', {
+            bubbles: true,
+            cancelable: true,
+            view: window,
+        });
+        target.dispatchEvent(clickEvent);
+    }
+});
+
+// Handle rest section light toggle for touch
+document.getElementById('lightButton').addEventListener('touchstart', toggleLight);
+
+// Ensure feed section image reset works on touch
+document.getElementById('feedSection').addEventListener('touchstart', resetPetImage);
 
 // Initialize game state
 document.addEventListener('DOMContentLoaded', () => {

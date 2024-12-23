@@ -1,5 +1,4 @@
 let selectedPet = '';
-
 const petImages = {
     puppy: {
         home: './image/puppyhomeimage.png',
@@ -43,12 +42,8 @@ setTimeout(() => {
 // Add the pet selection function
 function selectPet(petType) {
     selectedPet = petType;
-    
-    // Update initial images
     document.getElementById('homeimage').src = petImages[petType].home;
     document.getElementById('petImage').src = petImages[petType].feed;
-    
-    // Hide pet selection and show home page with status
     document.getElementById('petSelectionPage').classList.add('hidden');
     document.getElementById('homePage').classList.remove('hidden');
     statusSection.style.display = 'flex';
@@ -60,7 +55,6 @@ function showSection(section) {
     playSection.classList.add('hidden');
     restSection.classList.add('hidden');
     homePage.classList.add('hidden');
-
     if (section === 'feed') {
         feedSection.classList.remove('hidden');
         document.getElementById('petImage').src = petImages[selectedPet].feed;
@@ -76,13 +70,12 @@ function showSection(section) {
     }
 }
 
-// Handle drag over event to allow dropping
 // Store image mappings for different food items
 const foodImageMappings = {
-    'pizza': function() { return petImages[selectedPet].feedWithPizza; },
-    'bread': function() { return petImages[selectedPet].feedWithBread; },
-    'juice': function() { return petImages[selectedPet].feedWithJuice; },
-    'donut': function() { return petImages[selectedPet].feedWithDonut; }
+    'pizza': function () { return petImages[selectedPet].feedWithPizza; },
+    'bread': function () { return petImages[selectedPet].feedWithBread; },
+    'juice': function () { return petImages[selectedPet].feedWithJuice; },
+    'donut': function () { return petImages[selectedPet].feedWithDonut; }
 };
 
 // Handle the drag start event
@@ -113,7 +106,7 @@ document.head.appendChild(style);
 const foodMessages = {
     pizza: "Yummy! 🍕",
     bread: "Tasty! 🍞",
-    juice: "Delicious! 🥤",  
+    juice: "Delicious! 🥤",
     donut: "Sweet! 🍩"
 };
 
@@ -123,8 +116,8 @@ function showFoodMessage(foodType, petImage) {
     message.className = 'food-message';
     message.textContent = foodMessages[foodType] || "Yummy!";
     const petPosition = petImage.getBoundingClientRect();
-    message.style.left = (petPosition.left + 50) + 'px'; 
-    message.style.top = (petPosition.top + 20) + 'px';   
+    message.style.left = (petPosition.left + 50) + 'px';
+    message.style.top = (petPosition.top + 20) + 'px';
     document.body.appendChild(message);
     setTimeout(() => message.remove(), 2000);
 }
@@ -147,7 +140,7 @@ document.addEventListener('drop', (event) => {
 });
 
 document.addEventListener('dragover', (event) => {
-    event.preventDefault(); 
+    event.preventDefault();
 });
 
 const grid = document.getElementById('grid');
@@ -169,7 +162,7 @@ const assets = {
 
 // Create the grid
 function createGrid() {
-    grid.innerHTML = ''; // Clear grid before creating
+    grid.innerHTML = ''; 
     for (let i = 0; i < holes; i++) {
         const hole = document.createElement('div');
         hole.classList.add('hole');
@@ -181,18 +174,15 @@ function createGrid() {
 // Randomize hole content
 function randomizeContent() {
     const allHoles = document.querySelectorAll('.hole');
-    allHoles.forEach(hole => (hole.innerHTML = '')); // Clear holes
-
-    const numItems = timeLeft < 15 ? 2 : 1; // If time < 15s, show more items
+    allHoles.forEach(hole => (hole.innerHTML = '')); 
+    const numItems = timeLeft < 15 ? 2 : 1; 
     const usedHoles = [];
-
     for (let i = 0; i < numItems; i++) {
         let randomHole;
         do {
             randomHole = Math.floor(Math.random() * holes);
-        } while (usedHoles.includes(randomHole)); // Ensure unique holes
+        } while (usedHoles.includes(randomHole)); 
         usedHoles.push(randomHole);
-
         const hole = allHoles[randomHole];
         const randomAsset = Math.random() < 0.5 ? (Math.random() < 0.7 ? 'mouse' : 'timer') : 'bomb';
         const img = document.createElement('img');
@@ -206,7 +196,6 @@ function randomizeContent() {
 function handleClick(e) {
     if (e.target.tagName !== 'IMG') return; // Only respond to clicks on images
     const type = e.target.dataset.type;
-
     if (type === 'mouse') {
         score++;
     } else if (type === 'bomb') {
@@ -215,7 +204,6 @@ function handleClick(e) {
     } else if (type === 'timer') {
         timeLeft += 10;
     }
-
     updateScore();
     e.target.remove(); // Remove clicked item
 }
@@ -239,8 +227,6 @@ function startTimer() {
 }
 
 let gameRunning = false;
-
-// Start game logic
 const spawnIntervalTimeBefore15 = 2000;
 const spawnIntervalTimeAfter15 = 2500;
 function startGame() {
@@ -251,7 +237,7 @@ function startGame() {
     grid.innerHTML = '';
     gameOverMessage.classList.add('hidden');
     createGrid();
-    grid.addEventListener('click', handleClick); // Re-attach the event listener
+    grid.addEventListener('click', handleClick); 
     updateScore();
     startTimer();
     spawnInterval = setInterval(() => {
@@ -268,7 +254,7 @@ function endGame(success) {
     gameRunning = false;
     clearInterval(gameInterval);
     clearInterval(spawnInterval);
-    grid.removeEventListener('click', handleClick); // Remove the event listener
+    grid.removeEventListener('click', handleClick); 
     grid.innerHTML = '';
     gameOverMessage.classList.remove('hidden');
     gameOverMessage.textContent = success
@@ -288,34 +274,25 @@ function resetPetImage() {
     const petImage = document.getElementById('petImage');
     petImage.src = petImages[selectedPet].feed;
 }
-
 // Rest section logic
 function toggleLight() {
     const restSection = document.getElementById('restSection');
     const lightButton = document.getElementById('lightButton');
-
-    // Make sure we found our elements
     if (!restSection || !lightButton) {
         console.error('Required elements not found');
         return;
     }
 
     if (lightButton.textContent === "Turn Off Light") {
-        // Turn off light
         restSection.style.backgroundColor = "#000000";
         restSection.style.color = "#ffffff";
         lightButton.textContent = "Turn On Light";
-        
-        // Also darken the button for better visibility in dark mode
         lightButton.style.backgroundColor = "#333333";
         lightButton.style.color = "#ffffff";
     } else {
-        // Turn on light
         restSection.style.backgroundColor = "";
         restSection.style.color = "";
         lightButton.textContent = "Turn Off Light";
-        
-        // Reset button styles
         lightButton.style.backgroundColor = "";
         lightButton.style.color = "";
     }
@@ -332,13 +309,9 @@ function goHome() {
     resetPetImage();
 }
 
-// Pet status variables
-// Pet status variables
-// Pet status variables with range limits
 let hungerLevel = 70;
 let energyLevel = 50;
 let happinessLevel = 50;
-
 const MIN_LEVEL = 0;
 const MAX_LEVEL = 100;
 const ENERGY_CRITICAL = 25;
@@ -347,139 +320,113 @@ const HUNGRY_CRITICAL = 85;
 const CRITICAL_LEVEL = 20;
 let statusInterval;
 
-// Utility function to ensure value stays within range
 function clampValue(value) {
-return Math.min(MAX_LEVEL, Math.max(MIN_LEVEL, value));
+    return Math.min(MAX_LEVEL, Math.max(MIN_LEVEL, value));
 }
 
-// Update circle progress with range validation
 function setProgress(element, percent) {
-if (!element) return;
-const circle = element.querySelector('.progress-ring-circle');
-const value = element.querySelector('.progress-value');
-if (!circle || !value) return;
-
-// Ensure percent is within valid range
-const clampedPercent = clampValue(percent);
-const radius = circle.r.baseVal.value;
-const circumference = radius * 2 * Math.PI;
-circle.style.strokeDasharray = `${circumference} ${circumference}`;
-const offset = circumference - (clampedPercent / 100 * circumference);
-circle.style.strokeDashoffset = offset;
-// Display value with no decimal places
-value.textContent = `${Math.round(clampedPercent)}%`;
+    if (!element) return;
+    const circle = element.querySelector('.progress-ring-circle');
+    const value = element.querySelector('.progress-value');
+    if (!circle || !value) return;
+    // Ensure percent is within valid range
+    const clampedPercent = clampValue(percent);
+    const radius = circle.r.baseVal.value;
+    const circumference = radius * 2 * Math.PI;
+    circle.style.strokeDasharray = `${circumference} ${circumference}`;
+    const offset = circumference - (clampedPercent / 100 * circumference);
+    circle.style.strokeDashoffset = offset;
+    // Display value with no decimal places
+    value.textContent = `${Math.round(clampedPercent)}%`;
 }
-
 // Update all progress bars with range validation
 function updateAllProgress() {
-requestAnimationFrame(() => {
-setProgress(document.getElementById('hungryProgress'), hungerLevel);
-setProgress(document.getElementById('energyProgress'), energyLevel);
-setProgress(document.getElementById('happyProgress'), happinessLevel);
-});
+    requestAnimationFrame(() => {
+        setProgress(document.getElementById('hungryProgress'), hungerLevel);
+        setProgress(document.getElementById('energyProgress'), energyLevel);
+        setProgress(document.getElementById('happyProgress'), happinessLevel);
+    });
 }
-
 // Status update function with range validation
 function updateStatus() {
-hungerLevel = clampValue(hungerLevel + 0.2);
-energyLevel = clampValue(energyLevel - 0.1);
-happinessLevel = clampValue(happinessLevel - 0.2);
-updateAllProgress();
-checkCriticalLevels();
+    hungerLevel = clampValue(hungerLevel + 0.2);
+    energyLevel = clampValue(energyLevel - 0.1);
+    happinessLevel = clampValue(happinessLevel - 0.2);
+    updateAllProgress();
+    checkCriticalLevels();
 }
-
-
 // Handle feeding with range validation
-function handleFeeding() { 
-if (hungerLevel >= MAX_LEVEL) {
-showAlert("Pet is so hungry!");
+function handleFeeding() {
+    hungerLevel = clampValue(hungerLevel - 15);
+    if (hungerLevel >= MAX_LEVEL) {
+        showAlert("Pet is so hungry!");
 
-return;
+        return;
+    }
+    energyLevel = clampValue(energyLevel + 10);
+    happinessLevel = clampValue(happinessLevel + 10);
+    updateAllProgress();
 }
-
-hungerLevel = clampValue(hungerLevel - 15);
-energyLevel = clampValue(energyLevel + 10);
-happinessLevel = clampValue(happinessLevel + 10);
-updateAllProgress();
-}
-
 // Handle playing with range validation
 function handlePlaying() {
-if (energyLevel <= CRITICAL_LEVEL) {
-showAlert('Your pet is too tired to play! Let them rest.');
-return;
+    if (energyLevel <= CRITICAL_LEVEL) {
+        showAlert('Your pet is too tired to play! Let them rest.');
+        return;
+    }
+
+    happinessLevel = clampValue(happinessLevel + 15);
+    energyLevel = clampValue(energyLevel - 10);
+    hungerLevel = clampValue(hungerLevel + 10);
+
+    updateAllProgress();
 }
-
-happinessLevel = clampValue(happinessLevel + 15);
-energyLevel = clampValue(energyLevel - 10);
-hungerLevel = clampValue(hungerLevel + 10);
-
-updateAllProgress();
-}
-
 // Handle resting with range validation
 function handleResting() {
-if (energyLevel >= MAX_LEVEL) {
-showAlert("Your pet is fully rested!");
-return;
+    if (energyLevel >= MAX_LEVEL) {
+        showAlert("Your pet is fully rested!");
+        return;
+    }
+    energyLevel = clampValue(energyLevel + 10);
+    hungerLevel = clampValue(hungerLevel + 5);
+    happinessLevel = clampValue(happinessLevel + 15);
+    updateAllProgress();
 }
-
-energyLevel = clampValue(energyLevel + 10);
-hungerLevel = clampValue(hungerLevel + 5);
-happinessLevel = clampValue(happinessLevel + 15);
-
-updateAllProgress();
-}
-
-// Show alert popup
 function showAlert(message) {
-const popup = document.getElementById('alertPopup');
-if (!popup) return;
-
-const messageElement = document.getElementById('alertMessage');
-if (messageElement) {
-messageElement.textContent = message;
+    const popup = document.getElementById('alertPopup');
+    if (!popup) return;
+    const messageElement = document.getElementById('alertMessage');
+    if (messageElement) {
+        messageElement.textContent = message;
+    }
+    popup.classList.add('show');
+    setTimeout(() => closeAlert(), 3000);
 }
-popup.classList.add('show');
-
-// Auto-hide alert after 3 seconds
-setTimeout(() => closeAlert(), 3000);
-}
-
-// Close alert popup
 function closeAlert() {
-const popup = document.getElementById('alertPopup');
-if (popup) {
-popup.classList.remove('show');
+    const popup = document.getElementById('alertPopup');
+    if (popup) {
+        popup.classList.remove('show');
+    }
 }
-}
-
-// Check critical levels
 function checkCriticalLevels() {
-if (hungerLevel >= HUNGRY_CRITICAL) {
-showAlert('I am hungry! Please feed them.');
+    if (hungerLevel >= HUNGRY_CRITICAL) {
+        showAlert('I am hungry! Please feed them.');
+    }
+    if (energyLevel <= CRITICAL_LEVEL) {
+        showAlert('I am so tired! They need to rest.');
+    }
+    if (happinessLevel <= CRITICAL_LEVEL) {
+        showAlert('I am sad! Play with them.');
+    }
 }
-if (energyLevel <= CRITICAL_LEVEL) {
-showAlert('I am so tired! They need to rest.');
-}
-if (happinessLevel <= CRITICAL_LEVEL) {
-showAlert('I am sad! Play with them.');
-}
-}
-
-
-
 // Event listeners for interactions
 document.addEventListener('drop', (event) => {
-event.preventDefault();
-const petImage = document.getElementById('petImage');
+    event.preventDefault();
+    const petImage = document.getElementById('petImage');
 
-if (event.target === petImage) {
-handleFeeding();
-}
+    if (event.target === petImage) {
+        handleFeeding();
+    }
 });
-
-
 // Add event listeners for the play and rest buttons
 document.addEventListener('DOMContentLoaded', () => {
     const lightButton = document.getElementById('lightButton');
@@ -493,22 +440,19 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 });
-
-// Make sure to clean up the interval when needed
 window.addEventListener('beforeunload', () => {
     if (statusInterval) {
         clearInterval(statusInterval);
     }
 });
-
 // Rest function with status update
 function turnOffLight() {
-const restSection = document.getElementById('restSection');
-if (restSection) {
-restSection.style.background = "#000";
-restSection.style.color = "#666";
-handleResting();
-}
+    const restSection = document.getElementById('restSection');
+    if (restSection) {
+        restSection.style.background = "#000";
+        restSection.style.color = "#666";
+        handleResting();
+    }
 }
 // Add touch event support for drag-and-drop
 document.addEventListener('touchstart', (event) => {
@@ -520,7 +464,6 @@ document.addEventListener('touchstart', (event) => {
         event.dataTransfer.setData('text/plain', event.target.id);
     }
 });
-
 document.addEventListener('touchmove', (event) => {
     event.preventDefault();
     const touch = event.touches[0];
@@ -531,7 +474,6 @@ document.addEventListener('touchmove', (event) => {
         draggedElement.style.top = `${touch.pageY - draggedElement.offsetHeight / 2}px`;
     }
 });
-
 document.addEventListener('touchend', (event) => {
     const targetElement = document.elementFromPoint(
         event.changedTouches[0].clientX,
@@ -550,7 +492,6 @@ document.addEventListener('touchend', (event) => {
         }
     }
 });
-
 // Adjust the click/touch event logic for game grid
 grid.addEventListener('click', handleClick);
 grid.addEventListener('touchstart', (e) => {
@@ -566,27 +507,19 @@ grid.addEventListener('touchstart', (e) => {
     }
 });
 
-// Handle rest section light toggle for touch
 document.getElementById('lightButton').addEventListener('touchstart', toggleLight);
-
-// Ensure feed section image reset works on touch
 document.getElementById('feedSection').addEventListener('touchstart', resetPetImage);
-
-// Initialize game state
 document.addEventListener('DOMContentLoaded', () => {
-updateAllProgress();
-
-statusInterval = setInterval(updateStatus, 1000);
-
-const grid = document.getElementById('grid');
-if (grid) {
-grid.addEventListener('click', handleClick);
-}
-
-// Cleanup
-window.addEventListener('beforeunload', () => {
-if (statusInterval) {
-    clearInterval(statusInterval);
-}
-});
-});      // Initialize grid for the game
+    updateAllProgress();
+    statusInterval = setInterval(updateStatus, 1000);
+    const grid = document.getElementById('grid');
+    if (grid) {
+        grid.addEventListener('click', handleClick);
+    }
+    // Cleanup
+    window.addEventListener('beforeunload', () => {
+        if (statusInterval) {
+            clearInterval(statusInterval);
+        }
+    });
+});     
